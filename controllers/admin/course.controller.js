@@ -1,6 +1,7 @@
 const convertToSlugHelper = require("../../helper/convertToSlug");
 const Course = require("../../models/course.model");
 const Category = require('../../models/category.model');
+const helperGenerate = require("../../helper/generate");
 
 // [GET] /api/admin/courses
 module.exports.index = async (req, res) => {
@@ -117,6 +118,8 @@ module.exports.create = async (req, res) => {
         } else {
             delete req.body.toggle;
         }
+
+        req.body.code = helperGenerate.generateRadomString(8);
 
         const course = new Course(req.body);
         await course.save();

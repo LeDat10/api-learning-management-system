@@ -9,6 +9,10 @@ const courseSchema = new mongoose.Schema(
             required: true,
             trim: true
         },
+        code: {
+            type: String,
+            required: true
+        },
         categoryId: {
             type: String,
             default: ""

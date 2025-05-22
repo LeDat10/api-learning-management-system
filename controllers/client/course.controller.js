@@ -99,7 +99,7 @@ module.exports.detail = async (req, res) => {
             slug: slugCourse,
             status: "active",
             deleted: false
-        }).select("categoryId description slug thumbnail title type").lean();
+        }).select("categoryId description slug thumbnail title type code").lean();
 
         const sections = await Section.find({
             courseId: course._id,
