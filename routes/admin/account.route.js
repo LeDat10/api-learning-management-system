@@ -36,4 +36,8 @@ router.post('/login', controller.login);
 
 router.get('/permissions', authMiddleware.requireAuth, controller.getPermissions);
 
+router.get("/info-account", authMiddleware.requireAuth, controller.infoAccount);
+
+router.post("/logout", authMiddleware.requireAuth, controller.logout);
+
 module.exports = router;

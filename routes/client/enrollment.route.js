@@ -7,4 +7,6 @@ router.post('/register', controller.registerEnrollment);
 
 router.post('/cancel', controller.cancelEnrollment);
 
+router.post('/code-register', controller.codeRegister);
+
 module.exports = router;

@@ -77,9 +77,6 @@ module.exports.requireAuth = async (req, res, next) => {
             });
             return;
         };
-
-        // console.log(account.tokenVersion !== decoded.tokenVersion);
-
         req.account = account;
         next();
     } catch (error) {

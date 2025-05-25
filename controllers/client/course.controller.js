@@ -105,7 +105,9 @@ module.exports.detail = async (req, res) => {
             courseId: course._id,
             deleted: false,
             status: "active"
-        }).select("title").lean();
+        }).select("title").sort({
+            position: "asc"
+        }).lean();
 
         course.sections = sections;
         course.totalSections = sections.length;
@@ -115,7 +117,9 @@ module.exports.detail = async (req, res) => {
                 sectionId: section._id,
                 deleted: false,
                 status: "active"
-            }).select("title");
+            }).select("title").sort({
+                position: "asc"
+            });
             section.lessons = lessons;
         };
 

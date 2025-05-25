@@ -1,4 +1,5 @@
 const Enrollment = require("../../models/enrollment.model");
+const Course = require("../../models/course.model");
 
 // [POST] /api/client/enrollments/register
 module.exports.registerEnrollment = async (req, res) => {
@@ -9,6 +10,35 @@ module.exports.registerEnrollment = async (req, res) => {
             return res.json({
                 code: 400,
                 message: "Đăng ký khóa học thất bại!"
+            });
+        };
+
+        const course = await Course.findById(courseId);
+
+        if (!course) {
+            return res.json({
+                code: 400,
+                message: "Khóa học không tồn tại!"
+            });
+        };
+
+        if (!course.toggle) {
+            return res.json({
+                code: 400,
+                message: "Khóa học đã khóa. Không thể đăng ký!"
+            });
+        };
+
+        const existingEnrollment = await Enrollment.findOne({
+            courseId: courseId,
+            userId: userId,
+            status: 'Enrolled'
+        });
+
+        if (existingEnrollment) {
+            return res.json({
+                code: 400,
+                message: "Tài khoản này đã được đăng ký khóa học."
             });
         };
 
@@ -65,6 +95,35 @@ module.exports.cancelEnrollment = async (req, res) => {
         return res.json({
             code: 400,
             message: "Hủy đăng ký khóa học thất bại!"
+        });
+    };
+};
+
+//[POST] /api/client/enrollments/code-register
+module.exports.codeRegister = async (req, res) => {
+    try {
+        const code = req.body.code;
+        const course = await Course.findOne({
+            code: code
+        });
+
+        if (!course) {
+            return res.json({
+                code: 400,
+                message: "Khóa học không tồn tại!"
+            });
+        };
+
+        return res.json({
+            code: 200,
+            message: "Tìm thấy khóa học!",
+            slugCourse: course.slug
+        });
+
+    } catch (error) {
+        return res.json({
+            code: 400,
+            message: "Không tìm thấy khóa học!"
         });
     };
 };

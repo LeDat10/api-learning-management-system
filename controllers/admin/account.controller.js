@@ -228,7 +228,7 @@ module.exports.detail = async (req, res) => {
             deleted: false
         }).select("avatar fullName email status role_id").lean();
 
-        if(account.role_id) {
+        if (account.role_id) {
             const role = await Role.findOne({
                 _id: account.role_id,
                 deleted: false
@@ -253,7 +253,7 @@ module.exports.detail = async (req, res) => {
 module.exports.edit = async (req, res) => {
     try {
         const accountId = req.params.accountId;
-        
+
         if (req.body.password) {
             req.body.password = await argon2.hash(req.body.password);
         }
@@ -362,7 +362,7 @@ module.exports.trash = async (req, res) => {
                 };
             };
         }));
-        
+
         res.json({
             code: 200,
             accounts: accountsWithRole,
@@ -469,7 +469,7 @@ module.exports.login = async (req, res) => {
             deleted: false
         });
 
-        if(!account) {
+        if (!account) {
             res.json({
                 code: 401,
                 message: "Email đăng nhập không tồn tại!"
@@ -479,7 +479,7 @@ module.exports.login = async (req, res) => {
 
         const match = await argon2.verify(account.password, password);
 
-        if(!match) {
+        if (!match) {
             res.json({
                 code: 401,
                 message: "Mật khẩu đăng nhập không đúng!"
@@ -537,6 +537,59 @@ module.exports.getPermissions = async (req, res) => {
         res.json({
             code: 400,
             message: "Lấy quyền tài khoản thất bại!",
+        });
+    };
+};
+
+// [GET] /api/admin/accounts/info-account
+module.exports.infoAccount = async (req, res) => {
+    try {
+        const accountId = req.account._id;
+
+        const account = await Account.findOne({
+            _id: accountId,
+            deleted: false,
+            status: "active"
+        }).select("fullName email avatar phone");
+
+        if (!account) {
+            return res.json({
+                code: 400,
+                message: "Không tìm thấy tài khoản!"
+            });
+        };
+
+        return res.json({
+            code: 200,
+            message: "Lấy tài khoản thành công!",
+            account: account
+        });
+    } catch (error) {
+        return res.json({
+            code: 400,
+            message: "Lấy tài khoản thất bại!"
+        });
+    };
+};
+
+// [POST] /api/admin/accounts/logout
+module.exports.logout = async (req, res) => {
+    try {
+        const accountId = req.account._id;
+        await Account.updateOne({
+            _id: accountId,
+            deleted: false,
+            status: "active"
+        }, { $inc: { tokenVersion: 1 } });
+
+        return res.json({
+            code: 200,
+            message: "Đăng xuất tài khoản thành công!"
+        });
+    } catch (error) {
+        return res.json({
+            code: 400,
+            message: "Đăng xuất tài khoản thất bại!"
         });
     };
 };
