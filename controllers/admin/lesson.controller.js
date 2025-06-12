@@ -71,6 +71,7 @@ module.exports.index = async (req, res) => {
             };
         };
         const totalLesson = await Lesson.countDocuments({
+            sectionId: sectionId,
             deleted: false
         });
         res.json({
